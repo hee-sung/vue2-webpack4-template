@@ -5,11 +5,18 @@ Vue.use(Router)
 
 const Main = () => import(/* webpackChunkName: "main" */ '../components/Main')
 
+const AjaxTest = () => import(/* webpackChunkName: "test" */ '../components/AjaxTest')
+
 let routes = [
   {
     path: '/main',
     name: 'Main',
     component: Main
+  },
+  {
+    path: '/test/ajax',
+    name: 'AjaxTest',
+    component: AjaxTest
   }
 ]
 
