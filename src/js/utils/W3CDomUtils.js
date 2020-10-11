@@ -12,4 +12,12 @@ export class W3CDomUtils {
 
     return ''
   }
+
+  static setMeta (name, value) {
+    let tag = document.createElement('meta')
+    tag.setAttribute('property', name)
+    tag.setAttribute('content', value)
+
+    document.getElementsByTagName('head')[0].appendChild(tag)
+  }
 }
