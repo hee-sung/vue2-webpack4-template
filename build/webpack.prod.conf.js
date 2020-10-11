@@ -1,29 +1,22 @@
-'use strict'
+'use strict';
 
-const argv = require('minimist')(process.argv.slice(2))
+process.env.NODE_ENV = 'production';
 
-process.env.NODE_ENV = 'production'
-process.env.WITH_CONSOLE = !!argv.c ? 1 : 0;
+const argv = require('minimist')(process.argv.slice(2));
 
-const path = require('path')
+const withConsole = !!argv.c ? 1 : 0;
 
-const webpack = require('webpack')
-const merge = require('webpack-merge')
+const path = require('path');
+const utils = require('./utils');
+const webpack = require('webpack');
+const config = require('../config');
+const { merge } = require('webpack-merge');
+const baseWebpackConfig = require('./webpack.base.conf');
 
-const utils = require('./utils')
-const config = require('../config')
-const baseWebpackConfig = require('./webpack.base.conf')
-
-const CopyWebpackPlugin = require('copy-webpack-plugin')
-const OptimizeCssPlugin = require('optimize-css-assets-webpack-plugin')
-// const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
-const TerserPlugin = require('terser-webpack-plugin')
-// const CleanWebpackPlugin = require('clean-webpack-plugin') // v1.0
-const { CleanWebpackPlugin } = require('clean-webpack-plugin')
-
-const env = config.build.env
-
-process.traceDeprecation = true
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 const webpackConfig = merge(baseWebpackConfig, {
   mode: 'production',
@@ -39,25 +32,11 @@ const webpackConfig = merge(baseWebpackConfig, {
   },
   optimization: {
     minimizer: [
-      // new UglifyJsPlugin({
-      //   uglifyOptions: {
-      //     compress: {
-      //       warnings: false,
-      //       // drop_console: process.env.NODE_ENV === 'production' && process.env.WITH_CONSOLE === 0
-      //       drop_console: process.env.NODE_ENV === 'production'
-      //     }
-      //   },
-      //   parallel: true,
-      //   sourceMap: true,
-      //   cache: true,
-      //   cacheKeys: (defaultCacheKeys, file) => Object.assign({}, defaultCacheKeys, {path: file}),
-      // }),
       new TerserPlugin({
         terserOptions: {
           compress: {
             warnings: false,
-            // drop_console: process.env.NODE_ENV === 'production'
-            drop_console: process.env.NODE_ENV === 'production' && process.env.WITH_CONSOLE == 0
+            drop_console: withConsole == 0
           }
         },
         parallel: true,
@@ -65,7 +44,7 @@ const webpackConfig = merge(baseWebpackConfig, {
         cache: true,
         cacheKeys: (defaultCacheKeys, file) => Object.assign({}, defaultCacheKeys, {path: file}),
       }),
-      new OptimizeCssPlugin()
+      new OptimizeCSSPlugin()
     ],
     runtimeChunk: 'single',
     splitChunks: {
@@ -85,25 +64,24 @@ const webpackConfig = merge(baseWebpackConfig, {
     }
   },
   plugins: [
-    new webpack.DefinePlugin({
-      'process.env': env
-    }),
-    new webpack.HashedModuleIdsPlugin(),
-    // new CleanWebpackPlugin(['dist'], { // v1.0
-    //     root: path.resolve(__dirname, '../'),
-    //     verbose: true,
-    //     dry: false
+    // new webpack.EnvironmentPlugin({
+    //   NODE_ENV: 'production',
     // }),
+    new webpack.HashedModuleIdsPlugin(),
     new CleanWebpackPlugin(),
-    new CopyWebpackPlugin([
-      {
-        from: path.resolve(__dirname, '../static'),
-        to: config.build.assetsSubDirectory,
-        ignore: ['.*']
-      }
-    ])
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: path.resolve(__dirname, '../static'),
+          to: config.build.assetsSubDirectory,
+          globOptions: {
+            ignore: ['.*']
+          }
+        }
+      ]
+    })
   ]
-})
+});
 
 if (config.build.productionGzip) {
   const CompressionWebpackPlugin = require('compression-webpack-plugin')
@@ -129,4 +107,4 @@ if (config.build.bundleAnalyzerReport) {
   webpackConfig.plugins.push(new BundleAnalyzerPlugin())
 }
 
-module.exports = webpackConfig
+module.exports = webpackConfig;

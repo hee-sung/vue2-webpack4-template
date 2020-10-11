@@ -1,34 +1,35 @@
-'use strict'
+'use strict';
 
-const path = require('path')
+const path = require('path');
+const utils = require('./utils');
+const config = require('../config');
+const webpack = require('webpack');
 
-const webpack = require('webpack')
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-const utils = require('./utils')
-const config = require('../config')
-
-const VueLoaderPlugin = require('vue-loader/lib/plugin')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-
-const isProd = process.env.NODE_ENV === 'production'
-const _config = isProd ? config.build : config.dev
-const extractCSS = _config.extractCss
+const isProd = process.env.NODE_ENV === 'production';
+const _config = isProd ? config.build : config.dev;
+const extractCSS = _config.extractCss;
 
 const commonCssLoaders = [
   // TODO: remove style-loader: https://github.com/webpack-contrib/mini-css-extract-plugin/issues/34
   extractCSS ? MiniCssExtractPlugin.loader : 'style-loader',
   { loader: 'css-loader', options: { sourceMap: true } },
-]
+];
 
-function resolve (_dir) {
-  return path.join(__dirname, '..', _dir)
+function resolve(dir) {
+  return path.join(__dirname, '..', dir)
 }
 
 module.exports = {
   context: path.resolve(__dirname, '../'),
   entry: {
-    app: ['@babel/polyfill', './src/index.js']
+    app: ['@babel/polyfill',
+      'core-js/modules/es6.promise',
+      'core-js/modules/es6.array.iterator',
+      './src/main.js']
   },
   output: {
     path: config.build.assetsRoot,
@@ -57,15 +58,28 @@ module.exports = {
       },
       {
         test: /\.vue$/,
-        include: [resolve('src'), resolve('test')],
-        exclude: isProd? [resolve('src/components/test')] : [],
-        loader: 'vue-loader'
+        include: [
+          resolve('src'),
+          resolve('test')
+        ],
+        exclude: isProd ? [resolve('src/components/test')] : [],
+        use: [
+          { loader: 'vue-loader' },
+          { loader: 'eslint-loader' }
+        ]
       },
       {
         test: /\.js$/,
-        include: [resolve('src'), resolve('test'), resolve('node_modules/webpack-dev-server/client')],
+        include: [
+          resolve('src'),
+          resolve('test'),
+          resolve('node_modules/webpack-dev-server/client')
+        ],
         exclude: file => (/node_modules/.test(file) && !/\.vue\.js/.test(file)),
-        loader: 'babel-loader'
+        use: [
+          { loader: 'babel-loader' },
+          { loader: 'eslint-loader' }
+        ]
       },
       {
         test: /\.(html)$/,
@@ -82,12 +96,19 @@ module.exports = {
           {
             loader: 'sass-loader',
             options: {
-              includePaths: [
-                resolve('src'),
-                // resolve('node_modules')
-              ],
               // sourceMap: !isProd
-              sourceMap: true // true: 상대경로 인식. false: these relative modules were not found error.
+              sourceMap: true, // true: 상대경로 인식. false: these relative modules were not found error.
+              sassOptions: {
+                outputStyle: 'compressed',
+                includePaths: [
+                  resolve('src'),
+                  // resolve('node_modules')
+                ],
+              },
+              additionalData: `
+                @import "@/assets/scss/mixin.scss";
+                @import "@/assets/scss/main.scss";
+              `
             }
           }
         ])
@@ -106,7 +127,8 @@ module.exports = {
       },
       {
         test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
-        loader: 'url-loader',
+        // loader: 'url-loader',
+        loader: 'file-loader',
         options: {
           limit: 10000,
           name: utils.assetsPath('fonts/[name].[hash:7].[ext]')
@@ -122,9 +144,9 @@ module.exports = {
     }),
     new webpack.NamedChunksPlugin(),
     new HtmlWebpackPlugin({
-      filename: "index.html",
-      template: "index.html",
+      filename: 'index.html',
+      template: 'index.html',
       inject: true
     })
   ]
-}
+};

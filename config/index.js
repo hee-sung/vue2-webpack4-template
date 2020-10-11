@@ -27,7 +27,7 @@ module.exports = {
 
     // Various Dev Server settings
     host: '0.0.0.0',
-    port: 8080,
+    port: 9100,
     autoOpenBrowser: false,
     errorOverlay: true,
     notifyOnErrors: true,

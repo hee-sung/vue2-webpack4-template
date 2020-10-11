@@ -1,0 +1,5 @@
+const commonRoutes = [];
+
+export {
+  commonRoutes
+}

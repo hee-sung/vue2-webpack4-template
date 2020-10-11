@@ -1,32 +1,68 @@
-# version
+Vue2 Template
+=============
 
-* Vue.js (version 2)
-  - https://vuejs.org/v2/guide/
-* webpack (version 4)
-  - https://webpack.js.org/concepts/
-* babel (version 7)
-  - https://babeljs.io/docs/en/
+Technology stack
+----------------
+|         | version | site                                         |
+|:--------|:-------:|:---------------------------------------------|
+|vuejs    |2        |https://vuejs.org/                            |
+|webpack  |4        |https://v4.webpack.js.org/                    |
+|babel    |7        |https://babeljs.io/                           |
+|eslint   |7        |https://eslint.org/   https://eslint.vuejs.org|
   
-## Build Setup
 
-``` bash
-# install dependencies
+Build Setup
+-----------
+node, npm version information :   
+  * node version : ^12.16.2   
+  * npm version : ^6.14.4
+
+install dependencies :
+```bash
 npm install
+```
 
-# server with hot reload at localhost:8080
+server with hot reload :
+```bash
 npm run dev
+```
 
-# build for production with minification
+build for production with minification :
+```bash
 npm run build
+```
 
-# build for production with minification and console log
+build for production with minification and console log :
+```bash
 npm run build-c
+```
 
-# local node, npm version infomation
-node version : ^10.14.2
-npm version : 6.9.0
-
-# error solution
-fsevents error : https://github.com/strongloop/fsevents/issues/246#issuecomment-450746904 
-
+Directory Structure
+-------------------
+```
+|-- src
+    |-- api
+    |-- assets
+        |-- scss
+        |-- html
+        |-- image
+    |-- components (imported into pages)
+        |-- common
+        |-- mobile
+        |-- pc
+    |-- enums (constants)
+    |-- js (javascript class)
+    |-- locales (lanuage json) 
+    |-- mixins
+    |-- pages (application's views and routes.)
+        |-- common
+        |-- mobile
+        |-- pc
+    |-- router
+    |-- setup (settings)
+    |-- store
+    |-- test (test code)
+    |-- App.vue
+    |-- main.js
+|-- static
 ```

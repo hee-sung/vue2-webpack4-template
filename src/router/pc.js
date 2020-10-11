@@ -1,0 +1,5 @@
+const pcRoutes = [];
+
+export {
+  pcRoutes
+}

@@ -35,4 +35,21 @@ export class BrowserUtils {
     // and 조건으로 jsinterface 추가
     return BrowserUtils.isAndroid() && window.Android
   }
+
+  static getLanguage() {
+    let language = navigator.language || navigator.userLanguage;
+    language = language.substring(0, 2);
+
+    if (language !== 'ko') {
+      return 'en';
+    }
+
+    return language;
+  }
+
+  static getSubDomain() {
+    const host = window.location.host;
+
+    return host.split('.')[0];
+  }
 }

@@ -1,0 +1,5 @@
+const mobileRoutes = [];
+
+export {
+  mobileRoutes
+}

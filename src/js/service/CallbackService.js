@@ -1,6 +1,6 @@
 import { BrowserUtils } from "../utils/BrowserUtils"
 import { W3CDomUtils } from "../utils/W3CDomUtils";
-import { WebviewBridgeError } from "../error/WebviewBridgeError"
+import { JsInterfaceError } from "../error/WebviewBridgeError"
 
 export class CallbackService {
   constructor(action, callback) {
@@ -33,7 +33,7 @@ export class CallbackService {
           if (data) {
             resolve(JSON.parse(data))
           } else {
-            reject(new WebviewBridgeError('android', 'data is null'))
+            reject(new JsInterfaceError('android', 'data is null'))
           }
 
         } else if (env != 'real' && BrowserUtils.isPcPlatform()) {
@@ -41,7 +41,7 @@ export class CallbackService {
 
           resolve(data)
         } else {
-          reject(new WebviewBridgeError('other', 'other platform'))
+          reject(new JsInterfaceError('other', 'other platform'))
         }
       })
 

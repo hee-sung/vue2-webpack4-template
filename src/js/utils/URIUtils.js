@@ -1,14 +1,23 @@
 export class URIUtils {
-  static makeQueryString (data) {
+  static makeQueryString(data) {
     if (Object.keys(data).length < 1) {
-      return ''
+      return '';
     }
 
-    let result = []
+    let result = [];
     for (let key in data) {
-      result.push(`${key}=${data[key]}`)
+      result.push(`${key}=${data[key]}`);
     }
 
-    return `?${result.join('&')}`
+    return `?${result.join('&')}`;
+  }
+
+  static webBaseUrl() {
+    return `${location.protocol}//${location.host}`
+  }
+
+  static getWebStaticUrl() {
+    let baseUrl = this.webBaseUrl();
+    return `${baseUrl}/static`
   }
 }

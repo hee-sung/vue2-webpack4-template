@@ -1,22 +1,20 @@
 'use strict'
 
-process.env.NODE_ENV = 'development'
+process.env.NODE_ENV = 'development';
 
-const path = require('path')
+const path = require('path');
+const utils = require('./utils');
+const config = require('../config');
+const webpack = require('webpack');
+const { merge } = require('webpack-merge');
 
-const webpack = require('webpack')
-const merge = require('webpack-merge')
+const baseWebackConfig = require('./webpack.base.conf');
 
-const utils = require('./utils')
-const config = require('../config')
-const baseWebpackConfig = require('./webpack.base.conf')
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin');
+const portfinder = require('portfinder');
 
-const portfinder = require('portfinder')
-
-const CopyWebpackPlugin = require('copy-webpack-plugin')
-const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
-
-const devWebpackConfig = merge(baseWebpackConfig, {
+const devWebpackConfig = merge(baseWebackConfig, {
   mode: 'development',
   // cheap-module-eval-source-map is faster for development
   devtool: config.dev.devtool,
@@ -43,21 +41,27 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     headers: config.dev.headers,
     quiet: true, // necessary for FriendlyErrorsPlugin
   },
+  optimization: {
+    noEmitOnErrors: true,
+    namedModules: true
+  },
   plugins: [
-    new webpack.DefinePlugin({
-      'process.env': require('../config/dev.env')
-    }),
+    // new webpack.EnvironmentPlugin({
+    //   NODE_ENV: 'development'
+    // }),
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.NamedModulesPlugin(), // HMR shows correct file names in console on update.
-    new webpack.NoEmitOnErrorsPlugin(),
     // copy custom static assets
-    new CopyWebpackPlugin([
-      {
-        from: path.resolve(__dirname, '../static'),
-        to: config.dev.assetsSubDirectory,
-        ignore: ['.*']
-      }
-    ])
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: path.resolve(__dirname, '../static'),
+          to: config.dev.assetsSubDirectory,
+          globOptions: {
+            ignore: ['.*']
+          }
+        }
+      ]
+    })
   ]
 })
 
